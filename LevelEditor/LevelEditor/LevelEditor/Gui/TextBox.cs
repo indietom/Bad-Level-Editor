@@ -12,24 +12,24 @@ namespace LevelEditor.Gui
 {
     class TextBox
     {
-        KeyboardState keyboard;
-        KeyboardState prevKeyboard;
+        private KeyboardState keyboard;
+        private KeyboardState prevKeyboard;
 
-        MouseState mouse;
+        private MouseState mouse;
 
-        string text;
-        string label;
+        public string text { get; set; }
+        private string label;
 
         public int tag;
 
         public bool inFocus;
-        bool allowSpaces;
-        bool numbersOnly;
+        public bool allowSpaces;
+        public bool numbersOnly;
         public bool destroy;
 
-        Rectangle hitBox;
+        private Rectangle hitBox;
 
-        Color color;
+        private Color color;
 
         public Vector2 Postion { get; set; }
 

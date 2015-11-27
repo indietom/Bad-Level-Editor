@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 
 using LevelEditor.Core;
 using LevelEditor.Gui;
+using LevelEditor.FileManager;
 
 namespace LevelEditor
 {
@@ -28,6 +29,8 @@ namespace LevelEditor
         bool hasAddedMapInterface = false;
         bool hasAddedCreateMapInterFace = false;
         bool creatingNewMap = true;
+
+        internal static Browser browser = new Browser();
 
         public Game1()
         {
@@ -67,7 +70,9 @@ namespace LevelEditor
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
-            
+
+            browser.Update();
+
             prevKeyboard = keyboard;
             keyboard = Keyboard.GetState();
 
@@ -126,6 +131,8 @@ namespace LevelEditor
                     buttons.Add(new Button(new Vector2(10+64, 350), FinishCreatingMap, "CREATE MAP", ""));
                     hasAddedCreateMapInterFace = true;
                 }
+                
+                textBoxes[3].text = (browser.Clicked(false) != "") ? browser.Clicked(false).Split('.')[0] : textBoxes[3].text;
             }
 
             base.Update(gameTime);
@@ -177,6 +184,8 @@ namespace LevelEditor
             {
                 
             }
+
+            browser.Draw(spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);

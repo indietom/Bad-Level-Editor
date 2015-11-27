@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="Core\AssetManager.cs" />
     <Compile Include="Core\Camera.cs" />
+    <Compile Include="FileManager\Browser.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Core\Layer.cs" />
     <Compile Include="Core\Map.cs" />
@@ -160,7 +161,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="FileManager\" />
     <Folder Include="Parser\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
