@@ -71,8 +71,6 @@ namespace LevelEditor
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            browser.Update();
-
             prevKeyboard = keyboard;
             keyboard = Keyboard.GetState();
 
@@ -82,6 +80,8 @@ namespace LevelEditor
 
             foreach (Button b in buttons) b.Update();
             foreach (TextBox t in textBoxes) t.Update();
+
+            browser.Update();
 
             if (!creatingNewMap)
             {
@@ -131,8 +131,6 @@ namespace LevelEditor
                     buttons.Add(new Button(new Vector2(10+64, 350), FinishCreatingMap, "CREATE MAP", ""));
                     hasAddedCreateMapInterFace = true;
                 }
-                
-                textBoxes[3].text = (browser.Clicked(false) != "") ? browser.Clicked(false).Split('.')[0] : textBoxes[3].text;
             }
 
             base.Update(gameTime);
@@ -184,7 +182,6 @@ namespace LevelEditor
             {
                 
             }
-
             browser.Draw(spriteBatch);
             spriteBatch.End();
 
