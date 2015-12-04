@@ -43,6 +43,8 @@ namespace LevelEditor.FileManager
             }
         }
 
+        const int MAX_LIST_SIZE = 8;
+
         public Item[] Items { get; set; }
 
         private int selected;
@@ -66,6 +68,8 @@ namespace LevelEditor.FileManager
 
         private List<string> pastPaths;
 
+        public bool active;
+
         public Browser()
         {
             position = new Vector2(300, 200);
@@ -83,6 +87,7 @@ namespace LevelEditor.FileManager
         public void LoadPath(string path)
         {
             selected = 0;
+            offset = 0;
 
             string[] files = Directory.GetFiles(path);
             string[] folders = Directory.GetDirectories(path);
@@ -119,21 +124,48 @@ namespace LevelEditor.FileManager
 
             back.Update();
 
-            if (!textBox.inFocus && keyboard.IsKeyDown(Keys.Enter) && prevKeyboard.IsKeyUp(Keys.Enter) && pickedItem.type == Type.Folder)
+            if (!textBox.inFocus && keyboard.IsKeyDown(Keys.Enter) && prevKeyboard.IsKeyUp(Keys.Enter))
             {
-                pastPaths.Add(currentPath);
-                currentPath = pickedItem.name;
-                LoadPath(currentPath);
+                if (pickedItem.type == Type.Folder)
+                {
+                    pastPaths.Add(currentPath);
+                    currentPath = pickedItem.name;
+                    LoadPath(currentPath);
+                }
+                else
+                {
+
+                }
             }
 
-            for (int i = 0; i < Items.Count(); i++)
+            if (keyboard.IsKeyDown(Keys.Down) && offset <= Items.Count() - MAX_LIST_SIZE - 1) offset += 1;
+            if (keyboard.IsKeyDown(Keys.Up) && offset >= 1) offset -= 1;
+
+            if (Items.Count() <= MAX_LIST_SIZE)
             {
-                if (new Rectangle((int)position.X, i * (int)Items[i].Size.Y + (int)position.Y, (int)Items[i].Size.X, (int)Items[i].Size.Y).Intersects(new Rectangle(mouse.X, mouse.Y, 1, 1)))
+                for (int i = 0; i < Items.Count(); i++)
                 {
-                    if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                    if (new Rectangle((int)position.X, i * (int)Items[i].Size.Y + (int)position.Y, (int)Items[i].Size.X, (int)Items[i].Size.Y).Intersects(new Rectangle(mouse.X, mouse.Y, 1, 1)))
                     {
-                        pickedItem = Items[i];
-                        selected = i;
+                        if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                        {
+                            pickedItem = Items[i];
+                            selected = i;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < MAX_LIST_SIZE; i++)
+                {
+                    if (new Rectangle((int)position.X, i * (int)Items[i].Size.Y + (int)position.Y, (int)Items[i+offset].Size.X, (int)Items[i].Size.Y).Intersects(new Rectangle(mouse.X, mouse.Y, 1, 1)))
+                    {
+                        if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                        {
+                            pickedItem = Items[i + offset];
+                            selected = i+offset;
+                        }
                     }
                 }
             }
@@ -157,12 +189,24 @@ namespace LevelEditor.FileManager
         {
             textBox.Draw(spriteBatch);
             back.Draw(spriteBatch);
+
             if (Items != null)
             {
-                for (int i = 0; i < Items.Count(); i++)
+                if (Items.Count() <= MAX_LIST_SIZE)
                 {
-                    Color color = (i == selected) ? Color.Black : Color.White;
-                    Items[i].Draw(spriteBatch, position + new Vector2(0, i * Items[i].Size.Y), color);
+                    for (int i = 0; i < Items.Count(); i++)
+                    {
+                        Color color = (i == selected) ? Color.Black : Color.White;
+                        Items[i].Draw(spriteBatch, position + new Vector2(0, i * Items[i].Size.Y), color);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < MAX_LIST_SIZE; i++)
+                    {
+                        Color color = (i + offset == selected) ? Color.Black : Color.White;
+                        Items[i+offset].Draw(spriteBatch, position + new Vector2(0, i * Items[i + offset].Size.Y), color);
+                    }
                 }
             }
         }
