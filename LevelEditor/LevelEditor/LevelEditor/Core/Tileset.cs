@@ -24,8 +24,9 @@ namespace LevelEditor.Core
                     using (Stream s = TitleContainer.OpenStream(@tilesheetPath))
                         return Texture2D.FromStream(graphicsDevice, s);
                 }
-                catch
+                catch(Exception e)
                 {
+                    Console.WriteLine(e);
                     return AssetManager.errorImage;
                 }
             }
@@ -62,6 +63,8 @@ namespace LevelEditor.Core
             AssignTileCells();
 
             PickedTile = -1;
+
+            Console.WriteLine(tilesheetPath);
 
             hitBoxes = new Rectangle[AmountOfTiles];
         }

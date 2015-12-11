@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="Core\AssetManager.cs" />
     <Compile Include="Core\Camera.cs" />
+    <Compile Include="Core\Scene.cs" />
     <Compile Include="FileManager\Browser.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Core\Layer.cs" />
@@ -122,6 +123,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Scenes\Editor.cs" />
+    <Compile Include="Scenes\SetupLevel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

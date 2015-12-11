@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Media;
 using LevelEditor.Core;
 using LevelEditor.Gui;
 using LevelEditor.FileManager;
+using LevelEditor.Scenes;
 
 namespace LevelEditor
 {
@@ -32,6 +33,8 @@ namespace LevelEditor
 
         internal static Browser browser = new Browser();
 
+        internal static Scene currentScene;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -43,7 +46,9 @@ namespace LevelEditor
         protected override void Initialize()
         {
             AssetManager.Load(Content);
-            Globals.currentTileset = new Tileset("tiletest.png", 10, GraphicsDevice);
+            //Globals.currentTileset = new Tileset("tiletest.png", 10, GraphicsDevice);
+            browser.active = true;
+            currentScene = new SetupLevel(GraphicsDevice);
             base.Initialize();
         }
 
@@ -77,61 +82,7 @@ namespace LevelEditor
             if (Keyboard.GetState().IsKeyDown(Keys.P)) Globals.currentTool = Tools.Pen;
             if (Keyboard.GetState().IsKeyDown(Keys.E)) Globals.currentTool = Tools.Eraser;
             if (Keyboard.GetState().IsKeyDown(Keys.F)) Globals.currentTool = Tools.Fill;
-
-            foreach (Button b in buttons) b.Update();
-            foreach (TextBox t in textBoxes) t.Update();
-
-            browser.Update();
-
-            if (!creatingNewMap)
-            {
-                if (!hasAddedMapInterface)
-                {
-                    Globals.currentTileset.RefreshTileset();
-                    textBoxes.Clear();
-                    buttons.Clear();
-                    buttons.Add(new Button(new Vector2(660, 50), AddLayer, AssetManager.addButton, "Add new layer"));
-                    textBoxes.Add(new TextBox(new Vector2(50, 430), true, false, " | SAVE PATH: ", 0));
-                    buttons.Add(new Button(new Vector2(+AssetManager.font.MeasureString("SAVE").X / 2, 430 + AssetManager.font.MeasureString("SAVE").Y / 2), SaveMap, "SAVE", "SAVES MAP TO PATH"));
-                    hasAddedMapInterface = true;
-                }
-                camera.Update();
-
-                Globals.currentTileset.Update();
-
-                if (keyboard.IsKeyDown(Keys.F1) && !prevKeyboard.IsKeyDown(Keys.F1)) Globals.SaveProject("ayylmao");
-
-                foreach (Layer l in layers) l.Update();
-
-                for (int i = layers.Count - 1; i >= 0; i--)
-                {
-                    if (Globals.nextLayerTag == layers[i].Order)
-                        Globals.nextLayerTag += 1;
-
-                    if (layers[i].destroy)
-                    {
-                        Globals.nextLayerTag = layers[i].Order;
-                        layers.RemoveAt(i);
-                    }
-                }
-                hasAddedCreateMapInterFace = false;
-            }
-            else
-            {
-                hasAddedMapInterface = false;
-
-                if (!hasAddedCreateMapInterFace)
-                {
-                    textBoxes.Clear();
-                    buttons.Clear();
-                    textBoxes.Add(new TextBox(new Vector2(10, 10), false, true, "MAP WIDTH: ", 0));
-                    textBoxes.Add(new TextBox(new Vector2(10, 50), false, true, "MAP HEIGHT: ", 1));
-                    textBoxes.Add(new TextBox(new Vector2(10, 90), false, true, "TILE SIZE: ", 2));
-                    textBoxes.Add(new TextBox(new Vector2(10, 120), true, false, "TILESET PATH: ", 3));
-                    buttons.Add(new Button(new Vector2(10+64, 350), FinishCreatingMap, "CREATE MAP", ""));
-                    hasAddedCreateMapInterFace = true;
-                }
-            }
+            currentScene.Update();
 
             base.Update(gameTime);
         }
@@ -146,10 +97,13 @@ namespace LevelEditor
             if (textBoxes[0].ToString() != "" && textBoxes[1].ToString() != "" && textBoxes[2].ToString() != "")
             {
                 creatingNewMap = false;
+                browser.active = false;
                 Globals.mapSize = new Point(int.Parse(textBoxes[0].ToString()), int.Parse(textBoxes[1].ToString()));
+                Globals.currentTileset = new Tileset(textBoxes[3].ToString(), byte.Parse(textBoxes[2].ToString()), GraphicsDevice);
                 Globals.currentTileset.TileSize = byte.Parse(textBoxes[2].ToString());
-                Globals.currentTileset.tilesheetPath = textBoxes[3].ToString()+".png";
+                Globals.currentTileset.tilesheetPath = textBoxes[3].ToString();
                 Globals.currentTileset.RefreshTileset();
+                Console.WriteLine(Globals.currentTileset.Tilesheet);
             }
         }
 
@@ -159,30 +113,16 @@ namespace LevelEditor
 
             // For map
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, null, null, null, camera.GetTransform(GraphicsDevice));
-            if (!creatingNewMap)
-            {
-                spriteBatch.Draw(AssetManager.box, new Rectangle(0, 0, Globals.mapSize.X * Globals.currentTileset.TileSize, Globals.mapSize.Y * Globals.currentTileset.TileSize), Color.White);
-                foreach (Layer l in layers) l.Draw(spriteBatch);
-            }
+            currentScene.Draw(spriteBatch);
             spriteBatch.End();
 
             //For GUI
             spriteBatch.Begin(SpriteSortMode.FrontToBack, null);
 
-            foreach (Button b in buttons) b.Draw(spriteBatch);
-            foreach (TextBox t in textBoxes) t.Draw(spriteBatch);
+            if (browser.active) browser.Draw(spriteBatch);
 
-            if (!creatingNewMap)
-            {
-                Globals.currentTileset.Draw(spriteBatch);
-                foreach (Layer l in layers) l.DrawGui(spriteBatch);
-                spriteBatch.DrawString(AssetManager.font, "Press P for pen, E for eraser and F for fill", new Vector2(300, 0), Color.White, 0, Vector2.Zero, 0.7f, SpriteEffects.None, 0);
-            }
-            else
-            {
-                
-            }
-            browser.Draw(spriteBatch);
+            currentScene.DrawGui(spriteBatch);
+
             spriteBatch.End();
 
             base.Draw(gameTime);

@@ -67,6 +67,10 @@ namespace LevelEditor.Gui
                     else
                         break;
                 }
+                if (text == "" && !numbersOnly)
+                {
+                    text = Game1.browser.pickedItem.name;
+                }
                 inFocus = true;
             }
 
