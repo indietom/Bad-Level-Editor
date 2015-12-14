@@ -22,7 +22,7 @@ namespace LevelEditor.Scenes
             Buttons.Clear();
             Buttons.Add(new Button(new Vector2(660, 50), AddLayer, AssetManager.addButton, "Add new layer"));
             TextBoxes.Add(new TextBox(new Vector2(50, 430), true, false, " | SAVE PATH: ", 0));
-            Buttons.Add(new Button(new Vector2(+AssetManager.font.MeasureString("SAVE").X / 2, 430 + AssetManager.font.MeasureString("SAVE").Y / 2), SaveMap, "SAVE", "SAVES MAP TO PATH"));
+            Buttons.Add(new Button(new Vector2(AssetManager.font.MeasureString("SAVE").X / 2, 430 + AssetManager.font.MeasureString("SAVE").Y / 2), SaveMap, "SAVE", "SAVES MAP TO PATH"));
         }
 
         public override void Update()

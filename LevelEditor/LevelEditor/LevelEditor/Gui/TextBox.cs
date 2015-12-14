@@ -21,6 +21,9 @@ namespace LevelEditor.Gui
         private string label;
 
         public int tag;
+        private int backSpaceDelay;
+        private int keyPressDelay;
+        private int offset;
 
         public bool inFocus;
         public bool allowSpaces;
@@ -83,7 +86,21 @@ namespace LevelEditor.Gui
             {
                 color = Color.Blue;
 
-                if(!Keyboard.GetState().IsKeyDown(Keys.LeftShift)) text += PressedKeys();
+                if (!Keyboard.GetState().IsKeyDown(Keys.LeftShift) && keyboard.GetPressedKeys().Count() <= 1 && keyPressDelay == 0)
+                {
+                    text += PressedKeys();
+                    offset += 1;
+                }
+
+                if (keyboard.GetPressedKeys().Count() != 0)
+                {
+                    keyPressDelay += 1;
+                    keyPressDelay = (keyPressDelay >= 5) ? 0 : keyPressDelay;
+                }
+                else
+                {
+                    if (keyPressDelay > 0) keyPressDelay = (keyPressDelay >= 5) ? 0 : keyPressDelay;
+                }
 
                 if (!numbersOnly)
                 {
@@ -93,8 +110,15 @@ namespace LevelEditor.Gui
                     }
                 }
 
-                if (text.Length >= 1 && keyboard.IsKeyDown(Keys.Back) && !prevKeyboard.IsKeyDown(Keys.Back))
-                    text = RemoveChar(text.Length - 1, text);
+                if (text.Length >= 1 && keyboard.IsKeyDown(Keys.Back))
+                {
+                    if (backSpaceDelay <= 0)
+                        text = RemoveChar(text.Length - 1, text);
+                    backSpaceDelay += 1;
+                    backSpaceDelay = (backSpaceDelay >= 4) ? 0 : backSpaceDelay;
+                }
+
+                if (keyboard.IsKeyUp(Keys.Back)) backSpaceDelay = 0;
 
                 if (keyboard.IsKeyDown(Keys.Space) && !prevKeyboard.IsKeyDown(Keys.Space) && allowSpaces) text += ' ';
             }
@@ -122,7 +146,7 @@ namespace LevelEditor.Gui
 
             for (int i = 0; i < keyboard.GetPressedKeys().Count(); i++)
             {
-                if (keyboard != prevKeyboard)
+                if (true)
                 {
                     if (numbersOnly)
                         if (keyboard.GetPressedKeys()[i].ToString().Length == 2)
@@ -138,6 +162,19 @@ namespace LevelEditor.Gui
                     }
                 }
             }
+            return tmp;
+        }
+
+        public string AddStringInString(string orginal, string text, int offset)
+        {
+            string tmp = "";
+
+            for (int i = 0; i < orginal.Count(); i++)
+            {
+                tmp += orginal[i];
+                orginal += (i == offset) ? text : "";
+            }
+
             return tmp;
         }
 

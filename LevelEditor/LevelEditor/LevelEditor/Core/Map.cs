@@ -11,6 +11,7 @@ namespace LevelEditor.Core
     class Map
     {
         Point mapSize;
+        Point boxStart = new Point(-1, -1);
 
         public int[,] map;
 
@@ -85,6 +86,19 @@ namespace LevelEditor.Core
                 w.destroy = true;
             }
 
+            if (mouse.LeftButton == ButtonState.Released && boxStart != new Point(-1, -1))
+            {
+                int boxSize = (int)Globals.DistanceTo(new Vector2(boxStart.X, boxStart.Y), new Vector2(mouse.X, mouse.Y))/tileset.TileSize;
+
+                for (int x = 0; x < boxSize; x++)
+                {
+                    for (int y = 0; y < boxSize; y++)
+                    {
+                        map[x, y] = tileset.PickedTile;
+                    }
+                }
+            }
+
             if (mouse.LeftButton == ButtonState.Pressed)
             {
                 for (int x = 0; x < mapSize.X; x++)
@@ -102,6 +116,10 @@ namespace LevelEditor.Core
                                     map[x, y] = tileset.PickedTile;
                                 if (Globals.currentTool == Tools.Eraser)
                                     map[x, y] = -1;
+                                if (Globals.currentTool == Tools.Box)
+                                {
+                                    if (prevMouse.LeftButton != ButtonState.Pressed) boxStart = new Point(x, y);
+                                }
                                 if (prevMouse.LeftButton != ButtonState.Pressed && Globals.currentTool == Tools.Fill && tileset.PickedTile != -1)
                                 {
                                     targetTile = (sbyte)map[x, y];
