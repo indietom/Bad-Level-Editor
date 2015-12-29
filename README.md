@@ -7,6 +7,7 @@ A bad level editor I wrote because I had nothing else to do
 - Flood fill
 - Scene-system
 - File browser
+- Working GUI
 
 ##### Future features and things that need more work
 - Work on GUI
