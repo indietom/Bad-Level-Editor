@@ -12,6 +12,7 @@ A bad level editor I wrote because I had nothing else to do
 ##### Future features and things that need more work
 - Work on GUI
   - Feels buggy and sluggish (see issue #3)
+  - More user friendly
 - Load maps
 - Make filebrowser more user friendly
 - More tools, shapes
