@@ -15,5 +15,6 @@ A bad level editor I wrote because I had nothing else to do
   - More user friendly
 - Load maps
 - Make filebrowser more user friendly
+  - URL broweser
 - More tools, shapes
 - Zooming
