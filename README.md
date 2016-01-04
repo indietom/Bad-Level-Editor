@@ -17,5 +17,7 @@ A bad level editor I wrote because I had nothing else to do
 - Make filebrowser more user friendly
   - URL broweser
   - Go forward 
-- More tools, shapes
+- More tools
+  - Shapes
+  - Select tool
 - Zooming
