@@ -20,4 +20,5 @@ A bad level editor I wrote because I had nothing else to do
 - More tools
   - Shapes
   - Select tool
+  - Line
 - Zooming
