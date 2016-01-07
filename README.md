@@ -22,3 +22,4 @@ A bad level editor I wrote because I had nothing else to do
   - Select tool
   - Line
 - Zooming
+- Load tilesets with non-relative URLS
